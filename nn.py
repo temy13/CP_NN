@@ -24,13 +24,18 @@ class ClassificationModel(chainer.FunctionSet):
         t = chainer.Variable(t)
 
         #活性化関数: 出力の正規化
-        h = F.relu(self.l1(x)) #活性化関数 relu: 正規化線形関数 f(x) = max(0, x)
+        #relu: 正規化線形関数 f(x) = max(0, x)
+        h = F.relu(self.l1(x))
         h = F.relu(self.l2(h))
+        #sigmoid: 1 / 1 + exp(-x)
+        #h = F.sigmoid(self.l1(x))
+        #h = F.sigmoid(self.l2(h))
+
         h = self.l3(h)
 
         if train:
             #誤差関数:
-            return F.softmax_crosh2_entropy(h, t), F.accuracy(h, t)
+            return F.softmax_cross_entropy(h, t), F.accuracy(h, t)
         else:
             return F.accuracy(h, t)
 
@@ -62,12 +67,12 @@ def nn(train_label, train_data, test_label, test_data):
     train_label = train_label.astype(np.int32)
     test_data = test_data.astype(np.float32)
     test_label = test_label.astype(np.int32)
-    for h1_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-    #for h1_unit in [500]:
-        for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-        #for h2_unit in [50]:
-            for opt in ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]:
-            #for opt in ["AdaGrad"]:
+    #for h1_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+    for h1_unit in [100]:
+        #for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+        for h2_unit in [50]:
+            #for opt in ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]:
+            for opt in ["AdaGrad"]:
                 model = ClassificationModel(h1_unit, h2_unit)
                 #optimizer = optimizers.Adam()
                 optimizer = set_optimizer(opt)
@@ -81,7 +86,7 @@ def nn(train_label, train_data, test_label, test_data):
                     #逆伝搬による最適化
                     loss.backward()
                     optimizer.update()
-                    #print epoch, "acc  ", acc.data
+                    print epoch, "acc  ", acc.data
 
                 acc = model(test_data, test_label, train=False)
                 print opt, h1_unit, h2_unit, "acc test ", acc.data
