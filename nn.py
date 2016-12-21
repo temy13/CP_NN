@@ -66,7 +66,7 @@ def nn(train_label, train_data, test_label, test_data):
     #for h1_unit in [500]:
         for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
         #for h2_unit in [50]:
-            for opt in ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSpropGraves", "SMORMS3", "NesterovAG"]:
+            for opt in ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]:
             #for opt in ["AdaGrad"]:
                 model = ClassificationModel(h1_unit, h2_unit)
                 #optimizer = optimizers.Adam()
