@@ -1,0 +1,28 @@
+
+AdaGradが一番精度が良さそうに見える
+
+最適化手法の種類 入力層の出力ベクトル　中間層の出力ベクトル　精度
+
+SGD 100 100 acc test  0.800000011921
+MomentumSGD 100 100 acc test  0.933000028133
+AdaGrad 100 100 acc test  0.93900001049
+Adam 100 100 acc test  0.92460000515
+RMSpropGraves 100 100 acc test  0.933799982071
+NesterovAG 100 100 acc test  0.931599974632
+SGD 100 200 acc test  0.800000011921
+MomentumSGD 100 200 acc test  0.930800020695
+AdaGrad 100 200 acc test  0.939400017262
+Adam 100 200 acc test  0.925000011921
+RMSpropGraves 100 200 acc test  0.936800003052
+NesterovAG 100 200 acc test  0.935000002384
+SGD 100 300 acc test  0.800000011921
+MomentumSGD 100 300 acc test  0.934199988842
+AdaGrad 100 300 acc test  0.940800011158
+Adam 100 300 acc test  0.927600026131
+RMSpropGraves 100 300 acc test  0.934199988842
+NesterovAG 100 300 acc test  0.929600000381
+SGD 100 400 acc test  0.800000011921
+MomentumSGD 100 400 acc test  0.935199975967
+AdaGrad 100 400 acc test  0.941399991512
+Adam 100 400 acc test  0.924000024796
+
