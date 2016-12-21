@@ -8,16 +8,14 @@ import chainer.functions as F
 import chainer.links as L
 from chainer import optimizers
 
-
-#optimizer = chainer.optimizers.MomentumSGD(lr=0.01, momentum=0.9)
-
 #入力ベクトルが1000, 出力は2値
 class ClassificationModel(chainer.FunctionSet):
-    def __init__(self, f_unit, s_unit):
+    #中間層は2つ。計４層
+    def __init__(self, h1_unit, h2_unit):
         super(ClassificationModel, self).__init__(
-                l1=L.Linear(1000, f_unit), #Linear: 全結合
-                l2=L.Linear(f_unit, s_unit), #4層
-                l3=L.Linear(s_unit, 2)
+                l1=L.Linear(1000, h1_unit), #Linear: 全結合
+                l2=L.Linear(h1_unit, h2_unit),
+                l3=L.Linear(h2_unit, 2)
         )
 
     def __call__(self, x, t, train):
@@ -32,7 +30,7 @@ class ClassificationModel(chainer.FunctionSet):
 
         if train:
             #誤差関数:
-            return F.softmax_cross_entropy(h, t), F.accuracy(h, t)
+            return F.softmax_crosh2_entropy(h, t), F.accuracy(h, t)
         else:
             return F.accuracy(h, t)
 
@@ -64,13 +62,13 @@ def nn(train_label, train_data, test_label, test_data):
     train_label = train_label.astype(np.int32)
     test_data = test_data.astype(np.float32)
     test_label = test_label.astype(np.int32)
-    for f_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-    #for f_unit in [500]:
-        for s_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-        #for s_unit in [50]:
+    for h1_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+    #for h1_unit in [500]:
+        for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+        #for h2_unit in [50]:
             for opt in ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSpropGraves", "SMORMS3", "NesterovAG"]:
             #for opt in ["AdaGrad"]:
-                model = ClassificationModel(f_unit, s_unit)
+                model = ClassificationModel(h1_unit, h2_unit)
                 #optimizer = optimizers.Adam()
                 optimizer = set_optimizer(opt)
                 optimizer.setup(model)
@@ -86,12 +84,5 @@ def nn(train_label, train_data, test_label, test_data):
                     #print epoch, "acc  ", acc.data
 
                 acc = model(test_data, test_label, train=False)
-                print opt, f_unit, s_unit, "acc test ", acc.data
+                print opt, h1_unit, h2_unit, "acc test ", acc.data
                 model = optimizer = None
-                # global optimizer
-                #
-                # model = ClassificationModel()
-                # optimizer.setup(model.collect_parameters())
-                # for indata, label in zip(data, labels):
-                #     model.train(indata, label)
-                #     print label
