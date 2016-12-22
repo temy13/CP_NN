@@ -1,0 +1,19 @@
+Select Optimizer by grid search
+
+epoch:100
+layer:3(hidden:1)
+unit of hidden 1: 500
+活性化関数: relu
+
+Result
+optimizer, acc
+SGD   0.800000011921
+MomentumSGD   0.800000011921
+AdaGrad   0.869400024414
+AdaDelta   0.929000020027
+Adam   0.942399978638
+NesterovAG   0.800000011921
+MSprop   0.93440002203
+RMSpropGraves   0.800000011921
+SMORMS3   0.938600003719
+

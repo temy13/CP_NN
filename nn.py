@@ -13,13 +13,13 @@ from chainer import optimizers
 #入力ベクトルが1000, 出力は2値
 class ClassificationModel(chainer.FunctionSet):
     #中間層は2つ。計４層
-    #def __init__(self, h1_unit, h2_unit):
-    def __init__(self, h1_unit):
+    def __init__(self, h1_unit, h2_unit):
+    #def __init__(self, h1_unit):
         super(ClassificationModel, self).__init__(
                 l1=L.Linear(1000, h1_unit), #Linear: 全結合
-                l2=L.Linear(h1_unit, 2)
-                #l2=L.Linear(h1_unit, h2_unit),
-                #l3=L.Linear(h2_unit, 2)
+                #l2=L.Linear(h1_unit, 2)
+                l2=L.Linear(h1_unit, h2_unit),
+                l3=L.Linear(h2_unit, 2)
         )
 
     def __call__(self, x, t, train):
@@ -29,10 +29,10 @@ class ClassificationModel(chainer.FunctionSet):
 
         #活性化関数: 出力の正規化
         #relu: 正規化線形関数 f(x) = max(0, x)
-        h = F.relu(self.l1(x))
+        #h = F.relu(self.l1(x))
         #h = F.relu(self.l2(h))
         #sigmoid: 1 / 1 + exp(-x)
-        #h = F.sigmoid(self.l1(x))
+        h = F.sigmoid(self.l1(x))
         #h = F.sigmoid(self.l2(h))
 
         #h = self.l3(h)
@@ -75,8 +75,8 @@ def imple(d, h1_unit, h2_unit, opt):
     test_data = d["test_data"]
     test_label = d["test_label"]
 
-    #model = ClassificationModel(h1_unit, h2_unit)
-    model = ClassificationModel(h1_unit)
+    model = ClassificationModel(h1_unit, h2_unit)
+    #model = ClassificationModel(h1_unit)
     #optimizer = optimizers.Adam()
     optimizer = set_optimizer(opt)
     optimizer.setup(model)
@@ -89,10 +89,11 @@ def imple(d, h1_unit, h2_unit, opt):
       #逆伝搬による最適化
       loss.backward()
       optimizer.update()
-      print epoch, "acc  ", acc.data
+      #print epoch, "acc  ", acc.data
 
     acc = model(test_data, test_label, train=False)
     print opt, h1_unit, h2_unit, "acc test ", acc.data
+    #print opt, h1_unit, "acc test ", acc.data
     model = optimizer = None
 
 
@@ -118,8 +119,9 @@ def nn(train_label, train_data, test_label, test_data):
     d["train_label"] = train_label.astype(np.int32)
     d["test_data"] = test_data.astype(np.float32)
     d["test_label"] = test_label.astype(np.int32)
-    ao = ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]
-    ao = ["AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]
+    #ao = ["SGD", "MomentumSGD", "AdaGrad", "AdaDelta", "Adam", "NesterovAG", "RMSprop", "RMSpropGraves", "SMORMS3"]
+    #ao = ["AdaDelta", "Adam", "RMSprop", "SMORMS3"]
+    ao = ["Adam"]
     #for opts in [ao[0:2], ao[2:4], ao[4:6], ao[6:7], ao[7:8], ao[8:]]:
     #for opt in ["AdaGrad"]:
     # for opts in [ao[n * 2: n * 2 + 2] for n in range(4)]:
@@ -127,9 +129,9 @@ def nn(train_label, train_data, test_label, test_data):
     #   t.start()
     #t = MyThread(ao, d)
     #t.start()
-    #for h1_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-    for h1_unit in [500]:
-        #for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
-        for h2_unit in [50]:
+    for h1_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+    #for h1_unit in [500]:
+        for h2_unit in [n * 100 for n in range(1, 10)] + [10, 50]:
+        #for h2_unit in [10]:
             for opt in ao:
                 imple(d, h1_unit, h2_unit, opt)
